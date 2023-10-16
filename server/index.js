@@ -17,7 +17,7 @@ app.post("/login", async (req, res) => {
 
   const user = await UserModel.findOne({ email });
   if (!user) {
-    return res.json({ error: "User not found" });
+    return res.json({ status: "error", error: "User not found" });
   }
 
   if (user.password === password) {
@@ -28,7 +28,7 @@ app.post("/login", async (req, res) => {
     if (res.status(201)) {
       return res.json({ status: "ok", user: user });
     } else {
-      return res.json({ error: "error" });
+      return res.json({ status: "error", error: "error" });
     }
   }
   res.json({ status: "error", error: "Invalid Password" });

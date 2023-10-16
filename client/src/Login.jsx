@@ -20,6 +20,8 @@ function Login() {
         if (result.data.status === "ok") {
           dispatch(saveUser(result.data.user));
           navigate("/home");
+        } else if (result.data.status === "error") {
+          alert(result.data.error);
         }
       })
       .catch((err) => console.log(err));
