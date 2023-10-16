@@ -3,33 +3,63 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const UserModel = require("./models/User");
 
+const jwt = require("jsonwebtoken");
+
+const JWT_SECRET =
+  "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi78272jbkj?[]]pou89ywe";
 const app = express();
 app.use(express.json());
 app.use(cors());
 mongoose.connect("mongodb://127.0.0.1:27017/user");
 
-const current_user = UserModel();
-
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  UserModel.findOne({ email: email }).then((user) => {
-    if (user) {
-      if (user.password === password) {
-        res.json("Success");
-        current_user = user;
-      } else {
-        res.json("The password is incorrect");
-      }
+  // UserModel.findOne({ email: email }).then((user) => {
+  //   if (user) {
+  //     if (user.password === password) {
+  //       res.json("Success");
+  //       current_user = user;
+  //     } else {
+  //       res.json("The password is incorrect");
+  //     }
+  //   } else {
+  //     res.json("No record existed");
+  //   }
+  // });
+
+  const user = await UserModel.findOne({ email });
+  if (!user) {
+    return res.json({ error: "User not found" });
+  }
+
+  if (user.password === password) {
+    const token = jwt.sign({ email: user.email }, JWT_SECRET, {
+      expiresIn: "15m",
+    });
+
+    if (res.status(201)) {
+      return res.json({ status: "ok", user: user });
     } else {
-      res.json("No record existed");
+      return res.json({ error: "error" });
     }
-  });
+  }
+  res.json({ status: "error", error: "Invalid Password" });
 });
 
-app.post("/register", (req, res) => {
-  UserModel.create(req.body)
-    .then((users) => res.json(users))
-    .catch((err) => res.json(err));
+app.post("/register", async (req, res) => {
+  const { name, email, password, amount } = req.body;
+
+  try {
+    const oldUser = await UserModel.findOne({ email: email });
+    if (oldUser) {
+      return res.json({ error: "User existed" });
+    }
+    await UserModel.create(req.body)
+      .then((users) => res.json(users))
+      .catch((err) => res.json(err));
+  } catch (error) {
+    res.send({ status: error });
+  }
 });
 
 app.listen(3000, () => {
