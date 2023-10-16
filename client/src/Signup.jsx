@@ -6,15 +6,20 @@ function Signup() {
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [amount, setAmount] = useState();
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("http://localhost:3000/register", { name, email, password })
+      .post("http://localhost:3000/register", { name, email, password, amount })
       .then((result) => {
         console.log(result);
-        navigate("/login");
+        if (result.data.error) {
+          alert(result.data.error);
+        } else {
+          navigate("/login");
+        }
       })
       .catch((err) => console.log(err));
   };
@@ -60,6 +65,19 @@ function Signup() {
               name="password"
               className="form-control rounded-0"
               onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="email">
+              <strong>Amount</strong>
+            </label>
+            <input
+              type="text"
+              placeholder="Enter Amount"
+              name="amount"
+              className="form-control rounded-0"
+              onChange={(e) => setAmount(e.target.value)}
             />
           </div>
           <button type="submit" className="btn btn-success w-100 rounded-0">
