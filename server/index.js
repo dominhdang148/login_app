@@ -10,22 +10,10 @@ const JWT_SECRET =
 const app = express();
 app.use(express.json());
 app.use(cors());
-mongoose.connect("mongodb://127.0.0.1:27017/user");
+mongoose.connect("mongodb://host.docker.internal:27017/user");
 
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  // UserModel.findOne({ email: email }).then((user) => {
-  //   if (user) {
-  //     if (user.password === password) {
-  //       res.json("Success");
-  //       current_user = user;
-  //     } else {
-  //       res.json("The password is incorrect");
-  //     }
-  //   } else {
-  //     res.json("No record existed");
-  //   }
-  // });
 
   const user = await UserModel.findOne({ email });
   if (!user) {
@@ -62,6 +50,6 @@ app.post("/register", async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
+app.listen(80, () => {
   console.log("server is running");
 });

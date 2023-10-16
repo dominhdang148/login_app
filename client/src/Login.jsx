@@ -14,7 +14,7 @@ function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("http://localhost:3000/login", { email, password })
+      .post("http://localhost/login", { email, password })
       .then((result) => {
         console.log(result);
         if (result.data.status === "ok") {
